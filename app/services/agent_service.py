@@ -12,7 +12,10 @@ from langchain_community.vectorstores import Chroma
 from langchain_google_genai import (
     ChatGoogleGenerativeAI,
 )
-from langchain_community.embeddings import HuggingFaceEmbeddings
+# embedding mais rápido
+from langchain_community.embeddings import FastEmbedEmbeddings
+# embedding mais lento
+# from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate, FewShotPromptTemplate
 
@@ -31,8 +34,10 @@ class AgentService:
         self.DATA_FILE = self.BASE_DIR / "data" / "dados.xlsx"
         self.CHROMA_DIR = self.BASE_DIR / "chromadb"
 
-        # === 2) LLM e Embeddings (Gemini) ===
-        self.embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-m3")
+        # === 2) LLM e Embeddings ===
+        # self.embeddings = FastEmbedEmbeddings(model_name="BAAI/bge-m3")
+        self.embeddings = FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+
         self.llm = ChatGoogleGenerativeAI(
             model="gemini-2.0-flash",
             temperature=0,
