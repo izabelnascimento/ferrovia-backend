@@ -15,3 +15,4 @@ chromadb==0.5.18
 
 # embeddings leves (sem torch)
 fastembed==0.7.3
+posthog==3.0.1
