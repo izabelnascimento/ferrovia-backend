@@ -145,26 +145,91 @@ class AgentService:
         examples = [
             {
                 "question": "Calcule o MTTF do subsistema SINCDVCAV.",
-                "context": "Use dt_falha/hr_falha; calcule intervalos entre falhas e a média.",
-                "answer": "o MTTF do subsistema SINCDVCAV é de aproximadamente 15 dias.",
+                "instruction": "Use dt_falha/hr_falha para os subsistemas cuja sigla contém SINCDVCAV; calcule intervalos entre falhas e a média.",
+                "answer": "o MTTF do subsistema SINCDVCAV é de aproximadamente (resultado da média) horas.",
             },
             {
                 "question": "Qual é o MTTR do subsistema SINCDVFLO?",
-                "context": "Use (dt_enc/hr_enc) - (dt_falha/hr_falha) por registro e tire a média.",
-                "answer": "O MTTR do subsistema SINCDVFLO é de aproximadamente 2 horas e 30 minutos.",
+                "instruction": "Use (dt_enc/hr_enc) - (dt_falha/hr_falha) por registro para os subsistemas cuja sigla contém SINCDVFLO e tire a média.",
+                "answer": "O MTTR do subsistema SINCDVFLO é de aproximadamente (resultado da média) horas.",
+            },
+            {
+                "question": "Qual é a disponibilidade do subsistema SINCDVREC?",
+                "instruction": "Calcule o MTTF e o MTTR por registro para os subsistemas cuja sigla contém SINCDVREC, tire calcule a disponibilidade dividindo o MTTF por (MTTF + MTTR).",
+                "answer": "O MTTR do subsistema SINCDVFLO é de aproximadamente (resultado da disponibilidade em termos percentuais).",
             },
             {
                 "question": "Qual subsistema apresenta mais falhas?",
-                "context": "Conte ocorrências por subsistema e estime porcentagem.",
-                "answer": "O subsistema com mais falhas é o SINCDVCAV, representando cerca de 40% do total de falhas.",
+                "instruction": "Conte ocorrências por subsistema (siglas iguais) e estime porcentagem para cada um.",
+                "answer": "O subsistema com mais falhas registradas é o (resultado da contagem do subsistema que mais falha), representando cerca de (resultado da razão em termos percentuais) do total de ocorrências.",
+            },
+            {
+                "question": "Qual subsistema apresenta o maior MTTF?",
+                "instruction": "Use dt_falha/hr_falha para todos os subsistemas e calcule intervalos entre falhas e a média; liste os 10 subsistemas com maior MTTF",
+                "answer": "O subsistema que apresenta o maior MTTF é o (subsistema que possui o resultado com maior MTTF) com tempo médio entre falhas de aproximadamente (resultado do maior MTTF) horas.",
+            },
+            {
+                "question": "Qual subsistema apresenta o menor MTTF?",
+                "instruction": "Use dt_falha/hr_falha para todos os subsistemas e calcule intervalos entre falhas e a média; liste os 10 subsistemas com menor MTTF",
+                "answer": "O subsistema que apresenta o menor MTTF é o (subsistema que possui o resultado com menor MTTF) com tempo médio entre falhas de aproximadamente (resultado do menor MTTF) horas.",
+            },
+             {
+                "question": "Qual subsistema apresenta o maior MTTR?",
+                "instruction": "Use (dt_enc/hr_enc) - (dt_falha/hr_falha) para todos os subsistemas; liste os 10 subsistemas com maior MTTF",
+                "answer": "O subsistema que apresenta o maior MTTR é o (subsistema que possui o resultado com maior MTTR) com tempo médio de recuperação de aproximadamente (resultado do maior MTTF) horas.",
+            },
+            {
+                "question": "Qual subsistema apresenta o menor MTTR?",
+                "instruction": "Use (dt_enc/hr_enc) - (dt_falha/hr_falha) para todos os subsistemas; liste os 10 subsistemas com menor MTTF",
+                "answer": "O subsistema que apresenta o menor MTTR é o (subsistema que possui o resultado com menor MTTR) com tempo médio de recuperação de aproximadamente (resultado do menor MTTF) horas.",
+            },
+             {
+                "question": "Qual é o subsistema que possui a maior disponibilidade?",
+                "instruction": "De posse dos valores de MTTF e MTTR de cada subsistema, calcule a disponibilidade de cada subsistema dividindo o MTTF por (MTTF + MTTR) e liste os 10 subsistemas com a maior disponibilidade.",
+                "answer": "O subsistema que possui a maior disponibilidade é o (subsistema que possui o resultado da maior disponibilidade) = (resultado da maior disponibilidade em termos percentuais).",
+            },
+            {
+                "question": "Qual é o subsistema que possui a menor disponibilidade?",
+                "instruction": "De posse dos valores de MTTF e MTTR de cada subsistema, calcule a disponibilidade de cada subsistema dividindo o MTTF por (MTTF + MTTR) e liste os 10 subsistemas com a menor disponibilidade.",
+                "answer": "O subsistema que possui a menor disponibilidade é o (subsistema que possui o resultado da menor disponibilidade) = (resultado da menor disponibilidade em termos percentuais).",
+            },
+            {
+                "question": "Qual é o reclamente que mais registrou falhas?",
+                "instruction": "Listar os 10 reclamantes (coluna reclamante) cujo nome apresenta maior incidencia nos registros",
+                "answer": "O reclamante que mais registrou falhas foi (nome do reclamante com mais registros encontrados).",
+            },
+            {
+                "question": "Quais são os reclamentes que mais registraram falhas?",
+                "instruction": "Listar os 10 reclamantes (coluna reclamante) cujo nome apresenta maior incidencia nos registros, listar o número de registros de cada reclamante e apresentar a razão (em termos percentuais) que representa esse registro do total",
+                "answer": "Os 10 reclamantes que mais registraram falhas foram: (nomes dos reclamantes, seguido no número de falhas que cada um registrou e o quanto isso significa, em termos percentuais, do total de falhas registradas).",
+            },
+            {
+                "question": "Quais são as causas mais recorrentes de falha do subsistema SINCDVAFO?",
+                "instruction": "Listar apenas os subsistemas que correspondam a sigla do subsistema (SINCDVAFO, no caso desse exemplo), uma vez listados os subsistemas verificar na coluna solucao quais são os termos que apresentam maior recorrência de registro (exemplo: EMENDAS OXIDADAS; CODIGO ZERO EM TODOS OS CIRCUITOS; FALSA OCUPAC?O CONSTANTE; etc...)",
+                "answer": "As causas de falha mais recorrentes registradas para o subsistema SINCDVAFO foram: (listar as causas com maior recorrência encontradas).",
+            },
+            {
+                "question": "Qual é a causa mais recorrente de uma falha de falsa ocupação (F.O)?",
+                "instruction": "Na coluna descricao, liste as falhas que possuem o termo FO, F.O, FALSA OCUPAC?O; em seguida analise na coluna solucao quais são os termos mais recorrentes apresentados (ex: POWER AMPLIFIER COM TENSAO DE SAIDA BAIXA; OBJETO METALICO ENTRE TRILHO PROVOCANDO CURTO; CONEXOES FOLGADAS NA CIA; REAPERTOS NAS PORCAS E AJUSTAMOS AS BARRAS; FOLGA NA CONECC?O DA ANTENA NA CIA; FALTA  DE END POST; DISJUNTOR DA APS 2 0/31 DESARMADO; FUSIVEL SINALIZAC?O ABERTO; PORTAS ABERTAS E ELEMENTOS MEXENDO NA CASE; DISJUNTOR GERAL DESOPERADO NA APS 7; TALAS DANIFICADAS NAS ESTACAS; etc...) em seguida, o número de registros de cada termo e  a razão (em termos percentuais) em relação ao total de causas.",
+                "answer": "A causa mais recorrente registrada para falhas de falsa ocupação (F.O) é (resultado da causa mais recorrente registrada na coluna solucao), representando um total de (resultado do número de registros de causa recorrente) - (resultado da razão, em termos percentuais, da causa mais recorrente registrada na coluna solucao) do total de ocorrências.",
+            },
+            {
+                "question": "Qual é a causa mais recorrente de uma falha de código zero?",
+                "instruction": "Na coluna descricao, liste as falhas que possuem o termo código zero, COD 0, CODIGO ZERO; em seguida analise na coluna solucao quais são os termos mais recorrentes apresentados (ex: PAR CASADO DEFEITUOSO; RETIRADO O MAU CONTATO; FUSIVEL DE ATC FORA DO LOCAL; NADA CONSTATADO; A FALHA OCORRE EM FUNC?O DAS FALSAS NOS CDV'S;  A FALHA N?O OCORREU; CONDIC?O NORMAL; REVIS?O NAS CONEX?ES NA CASE E VIA; etc...) em seguida, o número de registros de cada termo e  a razão (em termos percentuais) em relação ao total de causas.",
+                "answer": "A causa mais recorrente registrada para falhas de COD 0 é (resultado da causa mais recorrente registrada na coluna solucao), representando um total de (resultado do número de registros de causa recorrente) - (resultado da razão, em termos percentuais, da causa mais recorrente registrada na coluna solucao) do total de ocorrências.",
+            },
+            {
+                "question": "Qual local apresenta maior ocorrência falhas?",
+                "instruction": "Na coluna local, liste os 10 locais com maior registro de ocorrências; em seguida exiba o número de ocorrências e a razão pelo total (em termos percentuais).",
+                "answer": "O local com mais falhas registradas é o (resultado da contagem do local que mais falha), representando cerca de (resultado da razão em termos percentuais) do total de ocorrências registradas.",
             },
         ]
 
         example_template = (
-            "Pergunta: {question}\nContexto: {context}\nResposta: {answer}"
+            "Pergunta: {question}\Instrução: {instruction}\nResposta: {answer}"
         )
         example_prompt = PromptTemplate(
-            input_variables=["question", "context", "answer"],
+            input_variables=["question", "instruction", "answer"],
             template=example_template
         )
 
@@ -174,7 +239,14 @@ class AgentService:
             prioridade, descricao, dt_enc, hr_enc, solucao, ordem, reclamante. 
             Com base nesses dados, responda a perguntas relacionadas a métricas como MTTF (Mean Time To Failure), 
             MTTR (Mean Time To Repair), frequência de falhas por subsistema, tempos médios de reparo, entre outras análises pertinentes. 
-            Forneça respostas claras e objetivas, utilizando os dados disponíveis para fundamentar suas respostas"""
+            Forneça respostas claras e objetivas, utilizando os dados disponíveis para fundamentar suas respostas
+            - utilize as instruções fornecidas nos exemplos para formatar suas respostas de maneira consistente.
+            - não responda as instruções dos exemplos, elas são apenas para formatar suas respostas.
+            - não responda com perguntas, apenas forneça as respostas solicitadas.
+            - calcule os valores quando necessário, utilizando os dados fornecidos.
+            - se o usuário pedir um relatório, forneça uma análise detalhada com base nos dados disponíveis, incluindo métricas como mttf, mttr, frequência de falhas, tempos médios de reparo, entre outras análises pertinentes.
+
+            """
         )
         
 
