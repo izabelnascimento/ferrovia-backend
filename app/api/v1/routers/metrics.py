@@ -134,3 +134,56 @@ def get_falhas_por_subsistema():
     except Exception as e:
         logger.error(f"Erro ao calcular falhas por subsistema: {e}")
         return {"error": str(e)}
+
+
+@router.get(
+    "/quantidade-subsistemas",
+    status_code=status.HTTP_200_OK,
+    summary="Quantidade de subsistemas",
+    description="Retorna a quantidade de subsistemas únicos no DataFrame."
+)
+def get_quantidade_subsistemas():
+    try:
+        df = service._load_and_clean_df()
+        if "subsistema" not in df.columns:
+            return {"error": "Coluna 'subsistema' não encontrada na planilha."}
+
+        quantidade_subsistemas = df["subsistema"].nunique()
+        logger.info(f"Quantidade de subsistemas únicos: {quantidade_subsistemas}")
+        return {"quantidade_subsistemas": quantidade_subsistemas}
+
+    except Exception as e:
+        logger.error(f"Erro ao calcular a quantidade de subsistemas: {e}")
+        return {"error": str(e)}
+
+
+@router.get(
+    "/disponibilidade-media",
+    status_code=status.HTTP_200_OK,
+    summary="Disponibilidade média dos subsistemas (%)",
+    description="Calcula a disponibilidade média de todos os subsistemas."
+)
+def get_disponibilidade_media():
+    try:
+        df = service._load_and_clean_df()
+        if not {"subsistema", "dt_falha", "hr_falha", "dt_enc", "hr_enc"}.issubset(df.columns):
+            return {"error": "Colunas necessárias não encontradas na planilha."}
+
+        # --- Reutiliza os cálculos de MTTF e MTTR ---
+        mttf_df = pd.DataFrame(get_mttf())
+        mttr_df = pd.DataFrame(get_mttr())
+
+        merged = pd.merge(mttf_df, mttr_df, on="subsistema", how="inner")
+        merged["disponibilidade"] = (
+            merged["mttf_dias"] * 24 / (merged["mttf_dias"] * 24 + merged["mttr_horas"])
+        ) * 100
+
+        # Calcula a disponibilidade média
+        disponibilidade_media = merged["disponibilidade"].mean()
+
+        logger.info(f"Disponibilidade média calculada: {disponibilidade_media:.2f}%")
+        return {"disponibilidade_media": round(disponibilidade_media, 2)}
+
+    except Exception as e:
+        logger.error(f"Erro ao calcular a disponibilidade média: {e}")
+        return {"error": str(e)}

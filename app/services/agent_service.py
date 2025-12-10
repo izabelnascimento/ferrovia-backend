@@ -133,7 +133,7 @@ class AgentService:
                     persist_directory=str(self.CHROMA_DIR)
                 )
             self.logger.info("Retriever initialization completed")
-            return vectordb.as_retriever(search_type="similarity", search_kwargs={"k": 10})
+            return vectordb.as_retriever(search_type="similarity", search_kwargs={"k": 5})
         except Exception as e:
             self.logger.error(f"Error initializing retriever: {str(e)}")
             raise
